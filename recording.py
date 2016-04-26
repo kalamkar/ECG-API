@@ -22,6 +22,7 @@ LIST_TEMPLATE = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <title>Dovetail Data</title>
         <style type="text/css">
             BODY {font-family: sans-serif; text-align:center;}
+            TABLE {width: 100%; text-align: left;}
         </style>
     </head>
     <body>
