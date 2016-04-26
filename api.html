@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Dovetail Data</title>
+		<style type="text/css">
+			BODY {font-family: sans-serif; text-align:center;}
+			LABEL {font-size: large;}
+			button { font-weight: bold; font-size: large; padding:5px; width:125px; }
+			h3 {margin:10px; text-align:center;}
+			.column {display:inline-block; vertical-align:top; text-align:left;}
+			.textfield { }
+			.submit {width: 80px; height:25px;}
+			.box-block {
+				border: thin solid gray; padding: 10px; margin:10px; vertical-align:top;
+				margin-bottom:20px;display:block;
+			}
+			.footnote {font-size: small; font-color: #ccc;}
+		</style>
+	</head>
+	<body>
+        <div class="column">
+            <h3>Recordings</h3>
+            <form action="/recording" enctype="multipart/form-data" method="post" class="box-block"><div>
+                <button type="submit">Upload</button><br/><br/>
+                <label>tags</label>
+                <input type="text" name="tags" size="25" class="textfield"/><br/><br/>
+                <input type="file" name="file" id="file"/></div>
+            </form>
+        </div>
+	</body>
+</html>
