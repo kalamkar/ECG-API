@@ -23,10 +23,12 @@ LIST_TEMPLATE = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <style type="text/css">
             BODY {font-family: sans-serif; text-align:center;}
             TABLE {width: 100%%; text-align: left;}
+            TH {text-align:center;}
         </style>
     </head>
     <body>
         <table border=0><tbody>
+        <tr><th>Upload Date</th><th>Tags</th><th>Duration</th><th>&nbsp;</th></tr>
 %s
         </tbody></table>
     </body>
@@ -134,6 +136,7 @@ def get_figure(ydata):
     ax.set_yticklabels([])
 
     ax.plot(ydata, linewidth=1)
+    ax.axis([0, len(ydata), 0, 255])
 
     ax.grid(which='both', color='r', linestyle='-')
     ax.grid(which='minor', alpha=0.2)
