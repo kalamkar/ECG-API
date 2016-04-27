@@ -11,5 +11,6 @@ from google.appengine.ext import ndb
 class Recording(ndb.Model):
     uuid = ndb.StringProperty()
     tags = ndb.StringProperty(repeated=True)
+    duration = ndb.IntegerProperty(default=0)
     create_time = ndb.DateTimeProperty(auto_now_add=True)
 

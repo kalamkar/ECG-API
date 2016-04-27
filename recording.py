@@ -22,7 +22,7 @@ LIST_TEMPLATE = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <title>Dovetail Data</title>
         <style type="text/css">
             BODY {font-family: sans-serif; text-align:center;}
-            TABLE {width: 100%; text-align: left;}
+            TABLE {width: 100%%; text-align: left;}
         </style>
     </head>
     <body>
@@ -58,13 +58,16 @@ class RecordingsAPI(webapp2.RequestHandler):
             return
 
         recording_id = str(uuid.uuid4())
-        recording = Recording(uuid=recording_id, tags=tags)
-        recording.put_async()
-
         filename = config.RECORDINGS_BUCKET + recording_id
+
         gcs_file = gcs.open(filename, mode='w', content_type=uploaded_file.type)
         gcs_file.write(uploaded_file.file.read())
         gcs_file.close()
+
+        stat = gcs.stat(filename)
+        recording = Recording(uuid=recording_id, tags=tags,
+                              duration=stat.st_size / config.SAMPLES_PER_SEC)
+        recording.put_async()
 
         api.write_message(self.response, 'success')
 
@@ -82,9 +85,13 @@ class RecordingsAPI(webapp2.RequestHandler):
         data = read(filename)
 
         if start and end:
-            data = data[int(start) * 1000:int(end) * 1000]
+            satrt_index = int(start) * config.SAMPLES_PER_SEC
+            end_index = int(end) * config.SAMPLES_PER_SEC
+            data = data[satrt_index:end_index]
         elif start:
-            data = data[int(start) * 1000:(int(start) + 5) * 1000]
+            satrt_index = int(start) * config.SAMPLES_PER_SEC
+            end_index = (int(start) + 5) * config.SAMPLES_PER_SEC
+            data = data[satrt_index:end_index]
 
         figure = get_figure(data)
 
@@ -104,8 +111,9 @@ class RecordingsListAPI(webapp2.RequestHandler):
         output = ''
         for recording in Recording.query():
             output = output + '<tr>'
-            output = output + '<td>%s</td>' % (str(recording.create_time))
-            output = output + '<td>%s</td>' % (','.join(recording.tags))
+            output = output + '<td>%s</td>' % (recording.create_time.strftime('%c'))
+            output = output + '<td>%s</td>' % (', '.join(recording.tags))
+            output = output + '<td>%d seconds</td>' % (recording.duration)
             output = output + '<td><a href="/recording?id=%s&start=0&end=5">Chart</a></td>' % (recording.uuid)
             output = output + '</tr>'
 
