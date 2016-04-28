@@ -92,7 +92,7 @@ class RecordingsAPI(webapp2.RequestHandler):
             data = data[satrt_index:end_index]
         elif start:
             satrt_index = int(start) * config.SAMPLES_PER_SEC
-            end_index = (int(start) + 5) * config.SAMPLES_PER_SEC
+            end_index = (int(start) + 10) * config.SAMPLES_PER_SEC
             data = data[satrt_index:end_index]
 
         figure = get_figure(data)
@@ -116,7 +116,7 @@ class RecordingsListAPI(webapp2.RequestHandler):
             output = output + '<td>%s</td>' % (recording.create_time.strftime('%c'))
             output = output + '<td>%s</td>' % (', '.join(recording.tags))
             output = output + '<td>%d seconds</td>' % (recording.duration)
-            output = output + '<td><a href="/recording?id=%s&start=0&end=5">Chart</a></td>' % (recording.uuid)
+            output = output + '<td><a href="/recording?id=%s&start=0&end=10">Chart</a></td>' % (recording.uuid)
             output = output + '</tr>'
 
         self.response.headers['Content-Type'] = 'text/html'
@@ -131,12 +131,12 @@ def get_figure(ydata):
     ax.set_xticks(np.arange(0, len(ydata), 200))
     ax.set_xticklabels([])
 
-    ax.set_yticks(np.arange(0, 255, 25))
-    ax.set_yticks(np.arange(0, 255, 5), minor=True)
+    ax.set_yticks(np.arange(0, 275, 25))
+    ax.set_yticks(np.arange(0, 275, 5), minor=True)
     ax.set_yticklabels([])
 
     ax.plot(ydata, linewidth=1)
-    ax.axis([0, len(ydata), 0, 255])
+    ax.axis([0, len(ydata), 0, 275])
 
     ax.grid(which='both', color='r', linestyle='-')
     ax.grid(which='minor', alpha=0.2)
