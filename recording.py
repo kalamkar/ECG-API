@@ -127,8 +127,8 @@ def get_figure(ydata):
     fig = pyplot.figure(figsize=(15, 6))
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.set_xticks(np.arange(0, len(ydata), 40), minor=True)
-    ax.set_xticks(np.arange(0, len(ydata), 200))
+    ax.set_xticks(np.arange(0, len(ydata), 8), minor=True)
+    ax.set_xticks(np.arange(0, len(ydata), 40))
     ax.set_xticklabels([])
 
     ax.set_yticks(np.arange(0, 275, 25))
