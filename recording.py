@@ -111,7 +111,7 @@ class RecordingsListAPI(webapp2.RequestHandler):
     def get(self):
 
         output = ''
-        for recording in Recording.query():
+        for recording in Recording.query().order(-Recording.create_time):
             output = output + '<tr>'
             output = output + '<td>%s</td>' % (recording.create_time.strftime('%c'))
             output = output + '<td>%s</td>' % (', '.join(recording.tags))
