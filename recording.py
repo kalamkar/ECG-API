@@ -78,6 +78,7 @@ class RecordingsAPI(webapp2.RequestHandler):
         recording_id = self.request.get('id')
         start = self.request.get('start')
         end = self.request.get('end')
+        flip = self.request.get('flip')
 
         if not recording_id:
             api.write_error(self.response, 400, 'Missing required parameter: id')
@@ -87,13 +88,16 @@ class RecordingsAPI(webapp2.RequestHandler):
         data = read(filename)
 
         if start and end:
-            satrt_index = int(start) * config.SAMPLES_PER_SEC
+            start_index = int(start) * config.SAMPLES_PER_SEC
             end_index = int(end) * config.SAMPLES_PER_SEC
-            data = data[satrt_index:end_index]
+            data = data[start_index:end_index]
         elif start:
-            satrt_index = int(start) * config.SAMPLES_PER_SEC
+            start_index = int(start) * config.SAMPLES_PER_SEC
             end_index = (int(start) + 10) * config.SAMPLES_PER_SEC
-            data = data[satrt_index:end_index]
+            data = data[start_index:end_index]
+
+        if flip:
+            data = [(255 - value) for value in data]
 
         figure = get_figure(data)
 
