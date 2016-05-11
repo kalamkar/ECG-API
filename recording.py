@@ -79,6 +79,7 @@ class RecordingsAPI(webapp2.RequestHandler):
         start = self.request.get('start')
         end = self.request.get('end')
         flip = self.request.get('flip')
+        grid = self.request.get('grid')
 
         if not recording_id:
             api.write_error(self.response, 400, 'Missing required parameter: id')
@@ -99,7 +100,7 @@ class RecordingsAPI(webapp2.RequestHandler):
         if flip:
             data = [(255 - value) for value in data]
 
-        figure = get_figure(data)
+        figure = get_figure(data, grid)
 
         output = StringIO.StringIO()
         figure.savefig(output, dpi=100, orientation='landscape', format='png', transparent=True,
@@ -127,17 +128,18 @@ class RecordingsListAPI(webapp2.RequestHandler):
         self.response.out.write(LIST_TEMPLATE % (output))
 
 
-def get_figure(ydata):
+def get_figure(ydata, show_grid=False):
     fig = pyplot.figure(figsize=(15, 6))
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.set_xticks(np.arange(0, len(ydata), 8), minor=True)
-    ax.set_xticks(np.arange(0, len(ydata), 40))
     ax.set_xticklabels([])
-
-    ax.set_yticks(np.arange(0, 275, 25))
-    ax.set_yticks(np.arange(0, 275, 5), minor=True)
     ax.set_yticklabels([])
+    if show_grid:
+        ax.set_xticks(np.arange(0, len(ydata), 8), minor=True)
+        ax.set_xticks(np.arange(0, len(ydata), 40))
+
+        ax.set_yticks(np.arange(0, 275, 25))
+        ax.set_yticks(np.arange(0, 275, 5), minor=True)
 
     ax.plot(ydata, linewidth=1)
     ax.axis([0, len(ydata), 0, 275])
