@@ -143,7 +143,9 @@ class RecordingsDownloadAPI(webapp2.RequestHandler):
             return
 
         filename = config.RECORDINGS_BUCKET + recording_id
-        data = read(filename)
+        gcs_file = gcs.open(filename)
+        data = gcs_file.read()
+        gcs_file.close()
 
         recording = Recording.query(Recording.uuid == recording_id).get()
         filename = str(' '.join(recording.tags)) + '.raw'
