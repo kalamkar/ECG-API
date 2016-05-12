@@ -122,7 +122,7 @@ class RecordingsListAPI(webapp2.RequestHandler):
         tag = self.request.get('tag')
 
         if tag and tag.strip():
-            query = Recording.query(Recording.tags.IN([tag]))
+            query = Recording.query(Recording.tags.IN([tag.lower()]))
         else:
             query = Recording.query().order(-Recording.create_time)
 
