@@ -39,12 +39,11 @@ LIST_TEMPLATE = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 class RecordingsAPI(webapp2.RequestHandler):
 
     def post(self):
-        tagstr = self.request.get('tags')
-        if not tagstr:
+        tags = clean_tags(self.request.get('tags'))
+        if not tags:
             api.write_error(self.response, 400, 'Missing required parameter: tags')
             return
 
-        tags = tagstr.lower().split(',')
         tags.append(api.get_geo_name(self.request))
 
         try:
@@ -159,4 +158,13 @@ def read(filename):
         data.append(ord(byte))
     return data
 
+def clean_tags(tagstr):
+    tags = []
+    if not tagstr:
+        return tags
+    for tag in tagstr.lower().split(','):
+        tag = tag.strip()
+        if tag:
+            tags.append(tag)
+    return tags
 
