@@ -119,9 +119,15 @@ class RecordingsAPI(webapp2.RequestHandler):
 class RecordingsListAPI(webapp2.RequestHandler):
 
     def get(self):
+        tag = self.request.get('tag')
+
+        if tag and tag.strip():
+            query = Recording.query(Recording.tags.IN([tag]))
+        else:
+            query = Recording.query().order(-Recording.create_time)
 
         output = ''
-        for recording in Recording.query().order(-Recording.create_time):
+        for recording in query:
             output += '<tr>'
             output += '<td>%s</td>' % (recording.create_time.strftime('%c'))
             output += '<td>%s</td>' % (', '.join(recording.tags))
