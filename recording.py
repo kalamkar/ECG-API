@@ -28,7 +28,13 @@ LIST_TEMPLATE = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     </head>
     <body>
         <table border=0><tbody>
-        <tr><th>Upload Date</th><th>Tags</th><th>Duration</th><th>&nbsp;</th></tr>
+        <tr>
+            <th>Upload Date</th>
+            <th>Tags</th>
+            <th>Duration</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
 %s
         </tbody></table>
     </body>
@@ -116,15 +122,35 @@ class RecordingsListAPI(webapp2.RequestHandler):
 
         output = ''
         for recording in Recording.query().order(-Recording.create_time):
-            output = output + '<tr>'
-            output = output + '<td>%s</td>' % (recording.create_time.strftime('%c'))
-            output = output + '<td>%s</td>' % (', '.join(recording.tags))
-            output = output + '<td>%d seconds</td>' % (recording.duration)
-            output = output + '<td><a href="/recording?id=%s&start=0&end=10">Chart</a></td>' % (recording.uuid)
-            output = output + '</tr>'
+            output += '<tr>'
+            output += '<td>%s</td>' % (recording.create_time.strftime('%c'))
+            output += '<td>%s</td>' % (', '.join(recording.tags))
+            output += '<td>%d seconds</td>' % (recording.duration)
+            output += '<td><a href="/recording?id=%s&start=0&end=10">Chart</a></td>' % (recording.uuid)
+            output += '<td><a href="/recording/download?id=%s">Download</a></td>' % (recording.uuid)
+            output += '</tr>'
 
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write(LIST_TEMPLATE % (output))
+
+
+class RecordingsDownloadAPI(webapp2.RequestHandler):
+
+    def get(self):
+        recording_id = self.request.get('id')
+        if not recording_id:
+            api.write_error(self.response, 400, 'Missing required parameter: id')
+            return
+
+        filename = config.RECORDINGS_BUCKET + recording_id
+        data = read(filename)
+
+        recording = Recording.query(Recording.uuid == recording_id).get()
+        filename = str(' '.join(recording.tags)) + '.raw'
+
+        self.response.headers['Content-Type'] = 'application/binary'
+        self.response.headers['Content-Disposition'] = 'attachment; filename="%s"' % (filename)
+        self.response.out.write(data)
 
 
 def get_figure(ydata, show_grid=False):
