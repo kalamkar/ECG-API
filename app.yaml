@@ -14,6 +14,9 @@ handlers:
   static_files: api.html
   upload: api\.html
 
+- url: /p
+  static_dir: pages
+  
 - url: /.*
   script: main.app
 

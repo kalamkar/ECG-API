@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Dovetail Recordings</title>
+        <style type="text/css">
+            BODY {font-family: sans-serif;}
+            LABEL {font-size: large;}
+            button { font-weight: bold; font-size: large; padding:5px; width:125px; }
+            input { font-weight: bold; font-size: large; padding:5px; }
+            .logo {display: inline-block; width: 20%}
+            .box {display: inline-block; vertical-align: top; margin-top: 25px;
+                    text-align: right; width: 70%;}
+            #list {width: 100%; height: 98%}
+            .footer { font-size: smaller; text-align: center;}
+        </style>
+        <script type="text/javascript">
+        function updateList() {
+        	var tag = document.getElementById('tag').value;
+        	document.getElementById('list').src = "/recording/list?tag=" + tag;
+        }
+        
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+        }
+        </script>
+    </head>
+    <body>
+        <div class="logo"><img src="icon.png" height="100px"/></div>
+        <div class="box">
+            <input id="tag" type="text" size="20"/>
+            <button onclick="updateList();">Search</button>
+        </div>
+        <iframe id="list" frameBorder="0" scrolling="no" onload="resizeIframe(this)"
+            src="/recording/list">
+        </iframe>
+        <div class="footer">&copy; Dovetail Care Inc. All rights reserved.</div>
+    </body>
+</html>
