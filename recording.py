@@ -85,6 +85,7 @@ class RecordingsAPI(webapp2.RequestHandler):
         end = self.request.get('end')
         flip = self.request.get('flip')
         grid = self.request.get('grid')
+        flag_smooth = self.request.get('smooth')
 
         if not recording_id:
             api.write_error(self.response, 400, 'Missing required parameter: id')
@@ -104,6 +105,9 @@ class RecordingsAPI(webapp2.RequestHandler):
 
         if flip:
             data = [(255 - value) for value in data]
+
+        if flag_smooth:
+            data = smooth(data)
 
         figure = get_figure(data, grid)
 
@@ -192,6 +196,7 @@ def read(filename):
         data.append(ord(byte))
     return data
 
+
 def clean_tags(tagstr):
     tags = []
     if not tagstr:
@@ -201,4 +206,11 @@ def clean_tags(tagstr):
         if tag:
             tags.append(tag)
     return tags
+
+
+def smooth(x, window_len=12):
+    s = np.r_[x[window_len - 1:0:-1], x, x[-1:-window_len:-1]]
+    w = np.hanning(window_len)  # hanning, hamming, bartlett, blackman
+    return np.convolve(w / w.sum(), s, mode='valid')
+
 
