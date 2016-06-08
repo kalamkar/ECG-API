@@ -172,8 +172,8 @@ def get_figure(ydata, show_grid=False):
     ax.set_xticklabels([])
     ax.set_yticklabels([])
     if show_grid:
-        ax.set_xticks(np.arange(0, len(ydata), 8), minor=True)
-        ax.set_xticks(np.arange(0, len(ydata), 40))
+        ax.set_xticks(np.arange(0, len(ydata), config.SAMPLES_PER_SEC / 1000 * 40), minor=True)
+        ax.set_xticks(np.arange(0, len(ydata), config.SAMPLES_PER_SEC / 1000 * 200))
 
         ax.set_yticks(np.arange(0, 275, 25))
         ax.set_yticks(np.arange(0, 275, 5), minor=True)
