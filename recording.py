@@ -34,6 +34,7 @@ LIST_TEMPLATE = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
             <th>Duration</th>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
+            <th>&nbsp;</th>
         </tr>
 %s
         </tbody></table>
@@ -45,6 +46,11 @@ LIST_TEMPLATE = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 class RecordingsAPI(webapp2.RequestHandler):
 
     def post(self):
+
+        if self.request.get('_delete'):
+            self.delete()
+            return
+
         tags = clean_tags(self.request.get('tags'))
         if not tags:
             api.write_error(self.response, 400, 'Missing required parameter: tags')
@@ -80,6 +86,10 @@ class RecordingsAPI(webapp2.RequestHandler):
 
 
     def get(self):
+        if self.request.get('_delete'):
+            self.delete()
+            return
+
         recording_id = self.request.get('id')
         start = self.request.get('start')
         end = self.request.get('end')
@@ -120,6 +130,27 @@ class RecordingsAPI(webapp2.RequestHandler):
         output.close()
 
 
+    def delete(self):
+        recording_id = self.request.get('id')
+
+        if not recording_id:
+            api.write_error(self.response, 400, 'Missing required parameter: id')
+            return
+
+        filename = config.RECORDINGS_BUCKET + recording_id
+
+        try:
+            gcs.delete(filename)
+        except:
+            api.write_error(self.response, 500, 'Unable to delete file')
+            return
+
+        recording = Recording.query(Recording.uuid == recording_id).get()
+        recording.key.delete()
+
+        api.write_message(self.response, 'success')
+
+
 class RecordingsListAPI(webapp2.RequestHandler):
 
     def get(self):
@@ -138,7 +169,8 @@ class RecordingsListAPI(webapp2.RequestHandler):
             output += '<td>%d seconds</td>' % (recording.duration)
             output += '<td><a href="/recording?id=%s&start=0&end=10">Chart</a></td>' % (recording.uuid)
             output += '<td><a href="/recording/download?id=%s">Download</a></td>' % (recording.uuid)
-            output += '</tr>'
+            output += '<td><a href="/recording?_delete=1&id=%s">Delete</a></td>' % (recording.uuid)
+            output += '</tr>\n'
 
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write(LIST_TEMPLATE % (output))
