@@ -34,7 +34,6 @@ LIST_TEMPLATE = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
             <th>Duration</th>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
-            <th>&nbsp;</th>
         </tr>
 %s
         </tbody></table>
@@ -169,7 +168,6 @@ class RecordingsListAPI(webapp2.RequestHandler):
             output += '<td>%d seconds</td>' % (recording.duration)
             output += '<td><a href="/recording?id=%s&start=0&end=10">Chart</a></td>' % (recording.uuid)
             output += '<td><a href="/recording/download?id=%s">Download</a></td>' % (recording.uuid)
-            output += '<td><a href="/recording?_delete=1&id=%s">Delete</a></td>' % (recording.uuid)
             output += '</tr>\n'
 
         self.response.headers['Content-Type'] = 'text/html'
